@@ -1,0 +1,2 @@
+cd "D:\HUTIYAPA\addtocart-hutiyapa\hutiyapa-addtocart-server"; npm install react-icons
+cd "D:\HUTIYAPA\addtocart-hutiyapa\hutiyapa-addtocart-client"; npm install react-icons

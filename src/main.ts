@@ -1,35 +1,59 @@
-import express, { Request, Response, NextFunction } from "express";
-import cors from "cors";
-import helmet from "helmet";
-import morgan from "morgan";
-import dotenv from "dotenv";
-import cartRouter from "./cart";
+import 'reflect-metadata';
+import { NestFactory } from '@nestjs/core';
+import { ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { AppModule } from './app.module';
+import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
+import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
+import * as dotenv from 'dotenv';
 
+// Load environment variables
 dotenv.config();
 
-const app = express();
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
 
-app.use(helmet());
-app.use(cors());
-app.use(express.json());
-app.use(morgan("dev"));
+  // Get configuration service
+  const configService = app.get(ConfigService);
 
-app.get("/health", (req: Request, res: Response) => {
-  res.status(200).json({ status: "ok" });
+  // Global validation pipe
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
+    }),
+  );
+
+  // Global exception filter
+  app.useGlobalFilters(new AllExceptionsFilter());
+
+  // Global logging interceptor
+  app.useGlobalInterceptors(new LoggingInterceptor());
+
+  // Enable CORS
+  app.enableCors({
+    origin: configService.get('CORS_ORIGIN', '*'),
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-user-id', 'x-session-token'],
+  });
+
+  // Global prefix
+  app.setGlobalPrefix('api/v1');
+
+  const port = configService.get('PORT', 3000);
+
+  await app.listen(port);
+
+  console.log(`🚀 Add-to-Cart Microservice running on port ${port}`);
+  console.log(`📊 Environment: ${configService.get('NODE_ENV', 'development')}`);
+  console.log(`🔗 Health check: http://localhost:${port}/api/v1/health`);
+}
+
+bootstrap().catch((error) => {
+  console.error('❌ Failed to start application:', error);
+  process.exit(1);
 });
-
-app.use("/cart", cartRouter);
-
-// Basic error handler
-app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
-  res.status(500).json({ error: err.message || "Internal Server Error" });
-});
-
-const port = Number(process.env["PORT"]) || 3000;
-
-app.listen(port, () => {
-  // eslint-disable-next-line no-console
-  console.log(`cart-server listening on port ${port}`);
-});
-
-

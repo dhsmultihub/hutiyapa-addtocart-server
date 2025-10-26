@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model CartSession {
+  id           String   @id @default(cuid())
+  userId       String?
+  sessionToken String   @unique
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  carts        Cart[]
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("cart_sessions")
+}
+
+model Cart {
+  id        String         @id @default(cuid())
+  sessionId String
+  userId    String?
+  status    CartStatus     @default(ACTIVE)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  items     CartItem[]
+  metadata  CartMetadata[]
+  session   CartSession    @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("carts")
+}
+
+model CartItem {
+  id            String   @id @default(cuid())
+  cartId        String
+  productId     String
+  variantId     String?
+  quantity      Int      @default(1)
+  price         Decimal  @db.Decimal(10, 2)
+  originalPrice Decimal? @db.Decimal(10, 2)
+  addedAt       DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  cart          Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+
+  @@unique([cartId, productId, variantId])
+  @@index([cartId])
+  @@index([productId])
+  @@index([variantId])
+  @@index([addedAt])
+  @@map("cart_items")
+}
+
+model CartMetadata {
+  id        String   @id @default(cuid())
+  cartId    String
+  key       String
+  value     String
+  createdAt DateTime @default(now())
+  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+
+  @@unique([cartId, key])
+  @@index([cartId])
+  @@index([key])
+  @@map("cart_metadata")
+}
+
+enum CartStatus {
+  ACTIVE
+  CHECKOUT
+  ABANDONED
+  COMPLETED
+  EXPIRED
+}
