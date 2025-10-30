@@ -1,0 +1,24 @@
+{
+  "timestamp": "2025-10-30T09:55:57.789Z",
+  "summary": {
+    "total": 2,
+    "passed": 1,
+    "failed": 1,
+    "successRate": "50.00%"
+  },
+  "tests": [
+    {
+      "name": "Health Check - Cart Service",
+      "status": "PASSED",
+      "result": {
+        "status": "ok",
+        "timestamp": "2025-10-30T09:55:57.490Z"
+      }
+    },
+    {
+      "name": "Create Cart Session",
+      "status": "FAILED",
+      "error": "Expected 200/201, got 401"
+    }
+  ]
+}
