@@ -4,7 +4,7 @@ import { DatabaseService } from '../database/database.service';
 import { SessionService } from '../session/session.service';
 import { DeviceSyncService } from '../session/device-sync.service';
 import {
-    SessionCleanupJob
+    SessionCleanupJob as SessionCleanupJobType
 } from '../types/session.types';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -27,7 +27,7 @@ export class SessionCleanupJob {
             this.logger.log('Starting session cleanup job');
 
             const jobId = uuidv4();
-            const job: SessionCleanupJob = {
+            const job: SessionCleanupJobType = {
                 id: jobId,
                 jobType: 'expired_sessions',
                 status: 'running',
@@ -105,7 +105,7 @@ export class SessionCleanupJob {
             this.logger.log('Starting deep cleanup job');
 
             const jobId = uuidv4();
-            const job: SessionCleanupJob = {
+            const job: SessionCleanupJobType = {
                 id: jobId,
                 jobType: 'orphaned_carts',
                 status: 'running',
@@ -209,7 +209,7 @@ export class SessionCleanupJob {
                     });
 
                     // Delete cart
-                    await this.databaseService.cart.delete({
+                    await this.databaseService.prisma.cart.delete({
                         where: { id: cart.id }
                     });
 
@@ -346,7 +346,7 @@ export class SessionCleanupJob {
     /**
      * Log cleanup job execution
      */
-    private async logCleanupJob(job: SessionCleanupJob): Promise<void> {
+    private async logCleanupJob(job: SessionCleanupJobType): Promise<void> {
         try {
             // This would typically log to a jobs table
             // For now, just log to console
@@ -359,7 +359,7 @@ export class SessionCleanupJob {
     /**
      * Get cleanup job history
      */
-    async getCleanupJobHistory(limit: number = 50): Promise<SessionCleanupJob[]> {
+    async getCleanupJobHistory(limit: number = 50): Promise<SessionCleanupJobType[]> {
         try {
             // This would typically query a jobs table
             // For now, return empty array
@@ -434,7 +434,7 @@ export class SessionCleanupJob {
             this.logger.log(`Manual cleanup triggered: ${cleanupType}`);
 
             const jobId = uuidv4();
-            const job: SessionCleanupJob = {
+            const job: SessionCleanupJobType = {
                 id: jobId,
                 jobType: cleanupType,
                 status: 'running',

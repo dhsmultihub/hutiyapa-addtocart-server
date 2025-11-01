@@ -5,7 +5,7 @@ import { HealthController } from './health.controller';
 import { HealthService } from './health.service';
 import { MetricsService } from './metrics.service';
 import { AlertingService } from './alerting.service';
-import { LoggerService } from '../logging/logger.service';
+import { CustomLoggerService as LoggerService } from '../logging/logger.service';
 import { CorrelationInterceptor } from '../logging/correlation.interceptor';
 import { AuditService } from '../logging/audit.service';
 

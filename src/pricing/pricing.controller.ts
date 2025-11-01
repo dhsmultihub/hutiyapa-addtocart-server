@@ -19,7 +19,7 @@ import { PricingEngineService } from '../services/pricing-engine.service';
 import { DiscountService } from '../services/discount.service';
 import { TaxService } from '../services/tax.service';
 import { PromotionService } from '../services/promotion.service';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { 
   PricingRequest, 
   PricingResponse, 

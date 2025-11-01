@@ -315,8 +315,7 @@ export class CartPersistenceService {
                         quantity: itemData.quantity,
                         price: itemData.price,
                         originalPrice: itemData.originalPrice,
-                        addedAt: itemData.addedAt,
-                        metadata: itemData.metadata
+                        addedAt: itemData.addedAt
                     }
                 });
             }

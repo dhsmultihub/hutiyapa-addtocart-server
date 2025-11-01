@@ -67,7 +67,7 @@ export class TaxService {
       return {
         taxes: taxApplications,
         totalTax,
-        currency: 'USD', // Default currency
+        currency: 'USD' as any, // Default currency
         metadata: {
           calculatedAt: new Date(),
           shippingAddress: request.shippingAddress,

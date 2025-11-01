@@ -9,8 +9,8 @@ import {
     OnGatewayInit
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { Logger, UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { Logger, UseGuards, Inject, forwardRef } from '@nestjs/common';
+import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import {
     WebSocketMessage,
     WebSocketConnection,
@@ -27,15 +27,18 @@ import { v4 as uuidv4 } from 'uuid';
     },
     namespace: '/cart'
 })
-export class WebSocketGateway implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit {
+export class CartWebSocketGateway implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit {
     @WebSocketServer()
     server: Server;
 
-    private readonly logger = new Logger(WebSocketGateway.name);
+    private readonly logger = new Logger(CartWebSocketGateway.name);
     private connections = new Map<string, WebSocketConnection>();
     private rooms = new Map<string, WebSocketRoom>();
 
-    constructor(private readonly cartEventsService: CartEventsService) { }
+    constructor(
+        @Inject(forwardRef(() => CartEventsService))
+        private readonly cartEventsService: CartEventsService
+    ) { }
 
     afterInit(server: Server) {
         this.logger.log('WebSocket Gateway initialized');

@@ -1,4 +1,4 @@
-import { Injectable, LoggerService, LogLevel } from '@nestjs/common';
+import { Injectable, LoggerService as NestLoggerService, LogLevel } from '@nestjs/common';
 import {
     LogEntry,
     LogLevel as CustomLogLevel,
@@ -7,7 +7,7 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
-export class LoggerService implements LoggerService {
+export class CustomLoggerService implements NestLoggerService {
     private readonly context = 'LoggerService';
     private logs: LogEntry[] = [];
     private correlationContext: CorrelationContext | null = null;

@@ -1,5 +1,5 @@
-import { Module } from '@nestjs/common';
-import { WebSocketGateway } from './websocket.gateway';
+import { Module, forwardRef } from '@nestjs/common';
+import { CartWebSocketGateway } from './websocket.gateway';
 import { CartEventsService } from './cart-events.service';
 import { DatabaseModule } from '../database/database.module';
 import { AuthModule } from '../auth/auth.module';
@@ -10,11 +10,11 @@ import { AuthModule } from '../auth/auth.module';
         AuthModule
     ],
     providers: [
-        WebSocketGateway,
+        CartWebSocketGateway,
         CartEventsService
     ],
     exports: [
-        WebSocketGateway,
+        CartWebSocketGateway,
         CartEventsService
     ]
 })

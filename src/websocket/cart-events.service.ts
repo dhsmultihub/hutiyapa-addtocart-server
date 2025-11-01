@@ -1,5 +1,5 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { WebSocketGateway } from './websocket.gateway';
+import { Injectable, Logger, Inject, forwardRef } from '@nestjs/common';
+import { CartWebSocketGateway } from './websocket.gateway';
 import { 
   WebSocketConnection, 
   WebSocketMessage, 
@@ -15,7 +15,10 @@ import { Cart } from '../types/cart.types';
 export class CartEventsService {
   private readonly logger = new Logger(CartEventsService.name);
 
-  constructor(private readonly webSocketGateway: WebSocketGateway) {}
+  constructor(
+    @Inject(forwardRef(() => CartWebSocketGateway))
+    private readonly webSocketGateway: CartWebSocketGateway
+  ) {}
 
   /**
    * Handle cart update from WebSocket

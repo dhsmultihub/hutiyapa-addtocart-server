@@ -173,6 +173,27 @@ export class CartModel {
   }
 
   /**
+   * Find unique cart (Prisma method wrapper)
+   */
+  async findUnique(args: { where: { id: string }; include?: any }) {
+    return this.prisma.cart.findUnique(args);
+  }
+
+  /**
+   * Find many carts (Prisma method wrapper)
+   */
+  async findMany(args?: any) {
+    return this.prisma.cart.findMany(args);
+  }
+
+  /**
+   * Count carts (Prisma method wrapper)
+   */
+  async count(args?: any) {
+    return this.prisma.cart.count(args);
+  }
+
+  /**
    * Map Prisma Cart to our Cart type
    */
   public mapPrismaCartToCart(prismaCart: PrismaCart & {

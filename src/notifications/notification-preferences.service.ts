@@ -448,7 +448,7 @@ export class NotificationPreferencesService {
         errors.push('Invalid end time format. Use HH:MM format.');
       }
       
-      if (timezone && !Intl.supportedValuesOf('timeZone').includes(timezone)) {
+      if (timezone && typeof Intl !== 'undefined' && (Intl as any).supportedValuesOf && !(Intl as any).supportedValuesOf('timeZone').includes(timezone)) {
         errors.push('Invalid timezone.');
       }
     }

@@ -50,7 +50,6 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
                 port: this.configService.get('REDIS_PORT', 6379),
                 password: this.configService.get('REDIS_PASSWORD'),
                 db: this.configService.get('REDIS_DB', 0),
-                retryDelayOnFailover: 100,
                 maxRetriesPerRequest: 3,
                 lazyConnect: true,
                 keepAlive: 30000,
@@ -587,7 +586,16 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
                 averageTtl: 0, // Would be calculated from Redis info
                 oldestEntry: new Date(),
                 newestEntry: new Date(),
-                byType: {},
+                byType: {
+                    [CacheKeyType.CART]: 0,
+                    [CacheKeyType.PRODUCT]: 0,
+                    [CacheKeyType.PRICING]: 0,
+                    [CacheKeyType.SESSION]: 0,
+                    [CacheKeyType.ORDER]: 0,
+                    [CacheKeyType.USER]: 0,
+                    [CacheKeyType.NOTIFICATION]: 0,
+                    [CacheKeyType.ANALYTICS]: 0
+                },
                 byLevel: {
                     [CacheLevel.L1_MEMORY]: 0,
                     [CacheLevel.L2_REDIS]: keys.length,
@@ -609,7 +617,16 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
                 averageTtl: 0,
                 oldestEntry: new Date(),
                 newestEntry: new Date(),
-                byType: {},
+                byType: {
+                    [CacheKeyType.CART]: 0,
+                    [CacheKeyType.PRODUCT]: 0,
+                    [CacheKeyType.PRICING]: 0,
+                    [CacheKeyType.SESSION]: 0,
+                    [CacheKeyType.ORDER]: 0,
+                    [CacheKeyType.USER]: 0,
+                    [CacheKeyType.NOTIFICATION]: 0,
+                    [CacheKeyType.ANALYTICS]: 0
+                },
                 byLevel: {
                     [CacheLevel.L1_MEMORY]: 0,
                     [CacheLevel.L2_REDIS]: 0,
@@ -635,7 +652,7 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
             const ping = await this.redis.ping();
             const info = await this.redis.info('server');
 
-            const checks = [
+            const checks: Array<{ name: string; status: 'pass' | 'fail' | 'warn'; message: string; duration: number }> = [
                 {
                     name: 'connection',
                     status: ping === 'PONG' ? 'pass' : 'fail',
@@ -663,7 +680,7 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
                 status: 'unhealthy',
                 checks: [{
                     name: 'connection',
-                    status: 'fail',
+                    status: 'fail' as const,
                     message: `Redis health check failed: ${error.message}`,
                     duration: 0
                 }],

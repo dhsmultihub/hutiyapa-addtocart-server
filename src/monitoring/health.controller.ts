@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { HealthService } from './health.service';
 import {
+    HealthCheck,
     HealthCheckResult,
     HealthStatus,
     DatabaseHealthCheck,

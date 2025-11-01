@@ -3,7 +3,7 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { DatabaseService } from '../database/database.service';
 import { CartPersistenceService } from '../session/cart-persistence.service';
 import {
-    CartBackupJob,
+    CartBackupJob as CartBackupJobType,
     CartBackup
 } from '../types/session.types';
 import { v4 as uuidv4 } from 'uuid';
@@ -26,7 +26,7 @@ export class CartBackupJob {
             this.logger.log('Starting cart backup job');
 
             const jobId = uuidv4();
-            const job: CartBackupJob = {
+            const job: CartBackupJobType = {
                 id: jobId,
                 sessionId: 'system',
                 cartId: 'system',
@@ -115,7 +115,7 @@ export class CartBackupJob {
             this.logger.log('Starting cart cleanup job');
 
             const jobId = uuidv4();
-            const job: CartBackupJob = {
+            const job: CartBackupJobType = {
                 id: jobId,
                 sessionId: 'system',
                 cartId: 'system',
@@ -198,9 +198,11 @@ export class CartBackupJob {
                 throw new Error(`Cart not found: ${cartId}`);
             }
 
+            const cartWithItems = cart as any;
+
             // Create backup data
             const backupData = {
-                items: cart.items.map(item => ({
+                items: (cartWithItems.items || []).map((item: any) => ({
                     id: item.id,
                     productId: item.productId,
                     variantId: item.variantId,
@@ -215,10 +217,10 @@ export class CartBackupJob {
                     tax: 0,
                     discount: 0,
                     total: 0,
-                    itemCount: cart.items.length,
+                    itemCount: (cartWithItems.items || []).length,
                     currency: 'USD'
                 },
-                metadata: this.extractCartMetadata(cart),
+                metadata: this.extractCartMetadata(cartWithItems),
                 lastModified: new Date()
             };
 
@@ -238,7 +240,7 @@ export class CartBackupJob {
                 expiresAt,
                 metadata: {
                     backupSize: JSON.stringify(backupData).length,
-                    itemCount: cart.items.length,
+                    itemCount: (cartWithItems.items || []).length,
                     createdBy: 'backup_job'
                 }
             };
@@ -281,8 +283,9 @@ export class CartBackupJob {
         }
 
         // Add computed metadata
-        metadata.totalItems = cart.items?.length || 0;
-        metadata.totalQuantity = cart.items?.reduce((sum: number, item: any) => sum + item.quantity, 0) || 0;
+        const items = (cart as any).items || [];
+        metadata.totalItems = items.length || 0;
+        metadata.totalQuantity = items.reduce((sum: number, item: any) => sum + item.quantity, 0) || 0;
         metadata.lastModified = new Date().toISOString();
         metadata.backupCreated = new Date().toISOString();
 
@@ -292,7 +295,7 @@ export class CartBackupJob {
     /**
      * Log backup job execution
      */
-    private async logBackupJob(job: CartBackupJob): Promise<void> {
+    private async logBackupJob(job: CartBackupJobType): Promise<void> {
         try {
             // This would typically log to a jobs table
             // For now, just log to console
@@ -305,7 +308,7 @@ export class CartBackupJob {
     /**
      * Get backup job history
      */
-    async getBackupJobHistory(limit: number = 50): Promise<CartBackupJob[]> {
+    async getBackupJobHistory(limit: number = 50): Promise<CartBackupJobType[]> {
         try {
             // This would typically query a jobs table
             // For now, return empty array
@@ -366,7 +369,7 @@ export class CartBackupJob {
             this.logger.log(`Manual backup triggered for session ${sessionId}, cart ${cartId}`);
 
             const jobId = uuidv4();
-            const job: CartBackupJob = {
+            const job: CartBackupJobType = {
                 id: jobId,
                 sessionId,
                 cartId,

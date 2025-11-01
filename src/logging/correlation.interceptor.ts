@@ -8,7 +8,7 @@ import {
 import { Observable } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 import { Request, Response } from 'express';
-import { LoggerService } from './logger.service';
+import { CustomLoggerService as LoggerService } from './logger.service';
 import { CorrelationContext } from '../types/monitoring.types';
 import { v4 as uuidv4 } from 'uuid';
 

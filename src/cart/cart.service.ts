@@ -211,7 +211,7 @@ export class CartService {
         items: pricingItems,
         userId: cart.userId,
         sessionId: cart.sessionId,
-        currency: 'USD' as const,
+        currency: 'USD' as any,
         metadata: {
           cartId: cart.id,
           calculatedAt: new Date()

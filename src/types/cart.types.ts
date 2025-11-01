@@ -11,6 +11,7 @@ export interface CartItem {
   originalPrice?: number;
   addedAt: Date;
   updatedAt: Date;
+  metadata?: Record<string, any>;
 }
 
 export interface CartMetadata {
@@ -40,6 +41,7 @@ export interface Cart {
   items: CartItem[];
   metadata: CartMetadata[];
   session: CartSession;
+  totals?: CartTotalsDto;
 }
 
 export enum CartStatus {

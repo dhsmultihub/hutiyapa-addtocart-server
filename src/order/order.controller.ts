@@ -16,7 +16,7 @@ import {
     DefaultValuePipe
 } from '@nestjs/common';
 import { OrderService } from '../services/order.service';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import {
     CreateOrderRequest,
     UpdateOrderRequest,

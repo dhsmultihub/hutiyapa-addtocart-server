@@ -24,6 +24,29 @@ export class DatabaseService {
   public cartItem: CartItemModel;
   public cartSession: CartSessionModel;
 
+  // Expose Prisma models directly for backward compatibility
+  get session() { return (this.prisma as any).session; }
+  get cartBackup() { return (this.prisma as any).cartBackup; }
+  get cartSnapshot() { return (this.prisma as any).cartSnapshot; }
+  get cartMetadata() { return (this.prisma as any).cartMetadata; }
+  get order() { return (this.prisma as any).order; }
+  get shipping() { return (this.prisma as any).shipping; }
+  get notification() { return (this.prisma as any).notification; }
+  get notificationPreferences() { return (this.prisma as any).notificationPreferences; }
+  get discount() { return (this.prisma as any).discount; }
+  get discountUsage() { return (this.prisma as any).discountUsage; }
+  get payment() { return (this.prisma as any).payment; }
+  get orderItem() { return (this.prisma as any).orderItem; }
+  get orderEvent() { return (this.prisma as any).orderEvent; }
+  get promotion() { return (this.prisma as any).promotion; }
+  get promotionUsage() { return (this.prisma as any).promotionUsage; }
+  get taxRate() { return (this.prisma as any).taxRate; }
+  get user() { return (this.prisma as any).user; }
+  get sessionSync() { return (this.prisma as any).sessionSync; }
+
+  // Expose Prisma query methods
+  get $queryRaw() { return this.prisma.$queryRaw.bind(this.prisma); }
+
   constructor() {
     this.prisma = new PrismaClient({
       log: process.env['NODE_ENV'] === 'development' ? ['query', 'info', 'warn', 'error'] : ['error'],

@@ -179,6 +179,20 @@ export class CartItemModel {
   }
 
   /**
+   * Delete many items (Prisma method wrapper)
+   */
+  async deleteMany(args?: any) {
+    return this.prisma.cartItem.deleteMany(args);
+  }
+
+  /**
+   * Create item (Prisma method wrapper)
+   */
+  async create(args: { data: any }) {
+    return this.prisma.cartItem.create(args);
+  }
+
+  /**
    * Map Prisma CartItem to our CartItem type
    */
   private mapPrismaItemToCartItem(prismaItem: any): CartItem {

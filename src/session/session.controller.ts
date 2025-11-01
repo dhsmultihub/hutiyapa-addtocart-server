@@ -18,7 +18,7 @@ import {
 import { SessionService } from './session.service';
 import { CartPersistenceService } from './cart-persistence.service';
 import { DeviceSyncService } from './device-sync.service';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import {
     CreateSessionRequest,
     SessionResponse,
@@ -271,8 +271,8 @@ export class SessionController {
     @Get(':id/cart/snapshots')
     async getCartSnapshots(
         @Param('id', ParseUUIDPipe) sessionId: string,
-        @Query('cartId') cartId?: string,
-        @Request() req: any
+        @Request() req: any,
+        @Query('cartId') cartId?: string
     ): Promise<any[]> {
         // First check if user can access this session
         const session = await this.sessionService.getSessionById(sessionId);

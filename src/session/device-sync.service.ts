@@ -189,7 +189,7 @@ export class DeviceSyncService {
                     field: `items.${newItem.productId}.quantity`,
                     oldValue: existingItem.quantity,
                     newValue: newItem.quantity,
-                    resolution: 'pending'
+                    resolution: 'accepted' as const
                 });
             }
         }
@@ -205,7 +205,7 @@ export class DeviceSyncService {
                     field: `items.${existingItem.productId}.removed`,
                     oldValue: existingItem.quantity,
                     newValue: 0,
-                    resolution: 'pending'
+                    resolution: 'accepted' as const
                 });
             }
         }
@@ -227,7 +227,7 @@ export class DeviceSyncService {
                     field: `totals.${field}`,
                     oldValue: existingTotals[field],
                     newValue: newTotals[field],
-                    resolution: 'pending'
+                    resolution: 'accepted' as const
                 });
             }
         }
@@ -250,7 +250,7 @@ export class DeviceSyncService {
                     field: `metadata.${field}`,
                     oldValue: existingMetadata[field],
                     newValue: newMetadata[field],
-                    resolution: 'pending'
+                    resolution: 'accepted' as const
                 });
             }
         }

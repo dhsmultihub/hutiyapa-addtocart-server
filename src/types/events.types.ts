@@ -135,10 +135,11 @@ export interface OrderChange {
     timestamp: Date;
 }
 
-export interface NotificationEvent extends BaseEvent {
+export interface NotificationEvent extends Omit<BaseEvent, 'type'> {
     notificationId: string;
     userId: string;
     type: NotificationType;
+    eventType: EventType.NOTIFICATION_SENT;
     channel: NotificationChannel;
     status: NotificationStatus;
     content: NotificationContent;

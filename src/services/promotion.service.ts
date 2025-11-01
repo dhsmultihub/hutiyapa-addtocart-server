@@ -247,9 +247,10 @@ export class PromotionService {
       const promotion = await this.getPromotionById(request.promotionId);
       
       if (!promotion) {
-        return {
-          isApplicable: false,
-          errorMessage: 'Promotion not found'
+            return {
+                isApplicable: false,
+                rewards: [],
+                errorMessage:  'Promotion not found'
         };
       }
 
@@ -261,9 +262,10 @@ export class PromotionService {
       });
 
       if (!isApplicable) {
-        return {
-          isApplicable: false,
-          errorMessage: 'Promotion is not applicable'
+            return {
+                isApplicable: false,
+                rewards: [],
+                errorMessage:  'Promotion is not applicable'
         };
       }
 
@@ -275,9 +277,10 @@ export class PromotionService {
 
     } catch (error) {
       this.logger.error('Promotion validation failed:', error.message);
-      return {
-        isApplicable: false,
-        errorMessage: `Promotion validation failed: ${error.message}`
+            return {
+                isApplicable: false,
+                rewards: [],
+                errorMessage:  `Promotion validation failed: ${error.message}`
       };
     }
   }

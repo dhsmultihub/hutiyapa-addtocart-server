@@ -44,8 +44,9 @@ export class CacheStrategyService {
       if (config.level === CacheLevel.L2_REDIS || config.level === CacheLevel.L3_DATABASE) {
         const redisResult = await this.redisService.get<T>(key);
         if (redisResult.success) {
-          // Store in L1 cache if configured
-          if (config.level === CacheLevel.L1_MEMORY) {
+          // Store in L1 cache if L1 is available
+          const l1Config = this.configs.get(CacheKeyType.CART);
+          if (l1Config && l1Config.level === CacheLevel.L1_MEMORY) {
             this.setInMemory(key, redisResult.value, config.ttl);
           }
           this.logger.debug(`Cache hit in L2 Redis for key: ${key}`);
