@@ -36,9 +36,18 @@ async function bootstrap() {
 
   // Enable CORS
   app.enableCors({
-    origin: configService.get('CORS_ORIGIN', '*'),
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'x-user-id', 'x-session-token'],
+    origin: configService.get('CORS_ORIGIN', 'http://localhost:3002'),
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: [
+      'Content-Type', 
+      'Authorization', 
+      'x-user-id', 
+      'x-session-token',
+      'x-test-user-id',  // For development testing
+      'x-test-session-id' // For development testing
+    ],
+    exposedHeaders: ['x-request-id'],
+    credentials: true,
   });
 
   // Global prefix

@@ -23,6 +23,19 @@ export class JwtAuthGuard implements CanActivate {
         }
 
         const request = context.switchToHttp().getRequest();
+        
+        // Development mode: Allow test headers to bypass authentication
+        if (process.env.NODE_ENV === 'development') {
+            const testUserId = request.headers['x-test-user-id'] || request.headers['x-test-session-id'];
+            const queryUserId = request.query?.userId;
+            const querySessionId = request.query?.sessionId;
+            
+            if (testUserId || queryUserId || querySessionId) {
+                // In development, allow requests with test headers/query params
+                return true;
+            }
+        }
+
         const token = this.extractTokenFromHeader(request);
 
         if (!token) {

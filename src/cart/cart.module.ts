@@ -10,8 +10,10 @@ import { PricingEngineService } from '../services/pricing-engine.service';
 import { DiscountService } from '../services/discount.service';
 import { TaxService } from '../services/tax.service';
 import { PromotionService } from '../services/promotion.service';
+import { DatabaseModule } from '../database/database.module';
 
 @Module({
+  imports: [DatabaseModule],
   controllers: [CartController],
   providers: [
     CartService,

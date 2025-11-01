@@ -11,13 +11,16 @@ export class CartItemModel {
    * Add item to cart
    */
   async addItem(cartId: string, data: AddItemDto): Promise<CartItem> {
+    // Normalize variantId: convert undefined to null for database
+    const variantId = data.variantId || null;
+    
     // Check if item already exists in cart
     const existingItem = await this.prisma.cartItem.findUnique({
       where: {
         cartId_productId_variantId: {
           cartId,
           productId: data.productId,
-          variantId: data.variantId || null
+          variantId: variantId
         }
       }
     });
@@ -27,7 +30,7 @@ export class CartItemModel {
       const updatedItem = await this.prisma.cartItem.update({
         where: { id: existingItem.id },
         data: {
-          quantity: existingItem.quantity + data.quantity,
+          quantity: existingItem.quantity + (data.quantity || 1),
           updatedAt: new Date()
         }
       });
@@ -39,10 +42,10 @@ export class CartItemModel {
         data: {
           cartId,
           productId: data.productId,
-          variantId: data.variantId,
-          quantity: data.quantity,
-          price: 0, // Will be updated by pricing service
-          originalPrice: 0 // Will be updated by pricing service
+          variantId: variantId,
+          quantity: data.quantity || 1,
+          price: 0, // Will be updated by pricing service (Prisma converts number to Decimal)
+          originalPrice: null // Will be updated by pricing service
         }
       });
 

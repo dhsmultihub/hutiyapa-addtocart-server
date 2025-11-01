@@ -115,10 +115,32 @@ export class DatabaseService {
    */
   async getOrCreateCart(sessionContext: SessionContext): Promise<Cart> {
     return this.transaction(async (tx) => {
+      // First, ensure the session exists in the database
+      let session = await tx.cartSession.findFirst({
+        where: {
+          OR: [
+            { id: sessionContext.sessionId },
+            { userId: sessionContext.userId || '' }
+          ]
+        }
+      });
+
+      if (!session) {
+        // Create session if it doesn't exist
+        const sessionToken = `cart_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        session = await tx.cartSession.create({
+          data: {
+            userId: sessionContext.userId || null,
+            sessionToken: sessionToken,
+            expiresAt: sessionContext.expiresAt || new Date(Date.now() + 24 * 60 * 60 * 1000)
+          }
+        });
+      }
+
       // Try to find existing active cart
       let cart = await tx.cart.findFirst({
         where: {
-          sessionId: sessionContext.sessionId,
+          sessionId: session.id,
           status: 'ACTIVE'
         },
         include: {
@@ -132,10 +154,10 @@ export class DatabaseService {
       });
 
       if (!cart) {
-        // Create new cart
+        // Create new cart with the valid session ID
         cart = await tx.cart.create({
           data: {
-            sessionId: sessionContext.sessionId,
+            sessionId: session.id,
             userId: sessionContext.userId || null,
             status: 'ACTIVE'
           },
